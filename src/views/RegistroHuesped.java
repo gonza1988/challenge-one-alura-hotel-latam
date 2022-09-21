@@ -247,25 +247,52 @@ public class RegistroHuesped extends JFrame {
 		separator_1_2_5.setForeground(new Color(12, 138, 199));
 		separator_1_2_5.setBackground(new Color(12, 138, 199));
 		contentPane.add(separator_1_2_5);
-		
-		JPanel btnguardar = new JPanel();
-		btnguardar.setBounds(723, 560, 122, 35);
-		btnguardar.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
+                
+                JButton btnCancelar = new JButton("");
+                btnCancelar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ReservasView reservas = new ReservasView();
+				reservas.setVisible(true);
+				dispose();
 			}
 		});
-		btnguardar.setLayout(null);
-		btnguardar.setBackground(new Color(12, 138, 199));
-		contentPane.add(btnguardar);
-		btnguardar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+		btnCancelar.setIcon(new ImageIcon(RegistroHuesped.class.getResource("/imagenes/cancelar.png")));
+		btnCancelar.setBackground(SystemColor.menu);
+		btnCancelar.setBounds(764, 543, 54, 41);
+		contentPane.add(btnCancelar);
+		
+		JButton btnGuardar = new JButton("");
+		btnGuardar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Exito exito = new Exito();
+				exito.setVisible(true);
+				dispose();
+			}
+		});
+		btnGuardar.setIcon(new ImageIcon(RegistroHuesped.class.getResource("/imagenes/disquete.png")));
+		btnGuardar.setBackground(SystemColor.menu);
+		btnGuardar.setBounds(700, 543, 54, 41);
+		contentPane.add(btnGuardar);
 		
 		JLabel labelGuardar = new JLabel("GUARDAR");
 		labelGuardar.setHorizontalAlignment(SwingConstants.CENTER);
 		labelGuardar.setForeground(Color.WHITE);
 		labelGuardar.setFont(new Font("Roboto", Font.PLAIN, 18));
 		labelGuardar.setBounds(0, 0, 122, 35);
-		btnguardar.add(labelGuardar);
+		btnGuardar.add(labelGuardar);
+                
+                JButton btnSalir = new JButton("");
+		btnSalir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MenuUsuario usuario = new MenuUsuario();
+				usuario.setVisible(true);
+				dispose();
+			}
+		});
+		btnSalir.setIcon(new ImageIcon(RegistroHuesped.class.getResource("/imagenes/cerrar-sesion 32-px.png")));
+		btnSalir.setBackground(SystemColor.menu);
+		btnSalir.setBounds(828, 543, 54, 41);
+		contentPane.add(btnSalir);
 		
 		JPanel panel = new JPanel();
 		panel.setBounds(0, 0, 489, 634);
