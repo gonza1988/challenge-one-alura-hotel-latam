@@ -1,7 +1,7 @@
 package jdbc.model;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public class Huesped {
@@ -12,14 +12,26 @@ public class Huesped {
     private Date fechaNacimiento;
     private String nacionalidad;
     private String telefono;
+    private int nroReserva;
     private List<Reserva> reservas;
 
-    public Huesped(String nombre, String apellido, Date fechaNacimiento, String nacionalidad, String telefono) {
+    public Huesped(int id, String nombre, String apellido, Date fechaNacimiento, String nacionalidad, String telefono, int nroReserva) {
+        this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
         this.fechaNacimiento = fechaNacimiento;
         this.nacionalidad = nacionalidad;
         this.telefono = telefono;
+        this.nroReserva = nroReserva;
+    }
+
+    public Huesped(String nombre, String apellido, Date fechaNacimiento, String nacionalidad, String telefono, int nroReserva) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.fechaNacimiento = fechaNacimiento;
+        this.nacionalidad = nacionalidad;
+        this.telefono = telefono;
+        this.nroReserva = nroReserva;
     }
 
     public Integer getId() {
@@ -78,11 +90,25 @@ public class Huesped {
         this.reservas = reservas;
     }
 
+    public int getNroReserva() {
+        return nroReserva;
+    }
+
+    public void setNroReserva(int nroReserva) {
+        this.nroReserva = nroReserva;
+    }
+    
+
     public void agregar(Reserva reserva) {
         if (this.reservas == null) {
             this.reservas = new ArrayList<>();
         }
     }
-    
+
+    @Override
+    public String toString() {
+        return "Huesped{" + "id=" + id + ", nombre=" + nombre + ", apellido=" + apellido + ", fechaNacimiento=" + fechaNacimiento + ", nacionalidad=" + nacionalidad + ", telefono=" + telefono + ", nroReserva=" + nroReserva + ", reservas=" + reservas + '}';
+    }
+
     
 }

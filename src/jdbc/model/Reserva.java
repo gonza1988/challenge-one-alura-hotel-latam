@@ -11,6 +11,7 @@ public class Reserva {
     private Date fechaSalida;
     private String valor;
     private String formaPago;
+    private Integer huespedId;
 
     public Reserva(Date fechaEntrada, Date fechaSalida, String valor, String formaPago) {
         this.fechaEntrada = fechaEntrada;
@@ -68,6 +69,15 @@ public class Reserva {
     public void setFormaPago(String formaPago) {
         this.formaPago = formaPago;
     }
+
+    public Integer getHuespedId() {
+        return huespedId;
+    }
+
+    public void setHuespedId(Integer huespedId) {
+        this.huespedId = huespedId;
+    }
+    
     
     
     

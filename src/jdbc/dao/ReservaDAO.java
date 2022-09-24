@@ -23,7 +23,7 @@ public class ReservaDAO {
     public void guardar(Reserva reserva) {
 
         try {
-            String sql = "INSERT INTO reservas (fecha_entrada, fecha_salida, valor, formaPago) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO reservas (fechaEntrada, fechaSalida, valor, formaPago) VALUES (?, ?, ?, ?)";
 
             try ( PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -52,7 +52,7 @@ public class ReservaDAO {
 
         try {
 
-            String sql = "SELECT Id, Fecha_entrada, Fecha_salida, Valor, Forma_Pago FROM reservas";
+            String sql = "SELECT Id, fechaEntrada, fechaSalida, valor, formaPago FROM reservas";
             
             try ( PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -60,9 +60,9 @@ public class ReservaDAO {
 
                 try (ResultSet resultSet = statement.getResultSet()) {
                     while (resultSet.next()) {
-                        Reserva fila = new Reserva(resultSet.getInt("Id"), resultSet.getDate("Fecha_entrada"),
-                                resultSet.getDate("Fecha_salida"), resultSet.getString("Valor"),
-                                resultSet.getString("Forma_Pago"));
+                        Reserva fila = new Reserva(resultSet.getInt("id"), resultSet.getDate("fechaEntrada"),
+                                resultSet.getDate("fechaSalida"), resultSet.getString("valor"),
+                                resultSet.getString("formaPago"));
 
                         resultado.add(fila);
 
@@ -77,7 +77,7 @@ public class ReservaDAO {
 
     public int eliminar(Integer id) {
         try {
-            String sql = "DELETE FROM reservas WHERE ID = ?";
+            String sql = "DELETE FROM reservas WHERE id = ?";
 
             try ( PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setInt(1, id);
@@ -95,8 +95,8 @@ public class ReservaDAO {
 
     public int modificar(Date fecha_entrada, Date fecha_salida, String valor, String forma_Pago, Integer id) {
         try {
-            String sql = "UPDATE RESERVAS SET " + " FECHA_ENTRADA = ?, "
-					+ " FECHA_SALIDA = ?," + " VALOR = ?," + " FORMA_PAGO = ?" + " WHERE ID = ?";
+            String sql = "UPDATE reservas SET " + " fechaEntrada = ?, "
+					+ " fechaSalida = ?," + " valor = ?," + " formaPago = ?" + " WHERE id = ?";
             
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -121,7 +121,7 @@ public class ReservaDAO {
 
         try {
 
-            String sql = "select ID, FECHA_ENTRADA, FECHA_SALIDA, VALOR, FORMA_PAGO from RESERVAS WHERE Id = ?";
+            String sql = "select id, fechaEntrada, fechaSalida, valor, formaPago from reservas WHERE Id = ?";
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -131,9 +131,9 @@ public class ReservaDAO {
 
                 try (ResultSet resultSet = statement.getResultSet()) {
                     while (resultSet.next()) {
-                        Reserva fila = new Reserva(resultSet.getInt("ID"), resultSet.getDate("FECHA_ENTRADA"),
-                                resultSet.getDate("FECHA_SALIDA"), resultSet.getString("VALOR"),
-                                resultSet.getString("FORMA_PAGO"));
+                        Reserva fila = new Reserva(resultSet.getInt("id"), resultSet.getDate("fechaEntrada"),
+                                resultSet.getDate("fechaSalida"), resultSet.getString("valor"),
+                                resultSet.getString("formaPago"));
 
                         resultado.add(fila);
                     }
