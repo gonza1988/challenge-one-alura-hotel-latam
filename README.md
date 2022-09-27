@@ -38,6 +38,7 @@ Creando el huésped:
 <br><br>
 
 Alerta de registro:
+<br>
 <img src="src\imagenes\alertaRegistro.png">
 <br><br>
 
