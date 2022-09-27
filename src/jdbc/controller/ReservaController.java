@@ -11,7 +11,7 @@ public class ReservaController {
     private ReservaDAO reservaDAO;
 
     public ReservaController() {
-        this.reservaDAO = new ReservaDAO(new ConnectionFactory().RecuperarConexion());
+        this.reservaDAO = new ReservaDAO(new ConnectionFactory().recuperarConexion());
     }
 
     public void guardar(Reserva reserva) {

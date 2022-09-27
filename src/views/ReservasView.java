@@ -11,6 +11,7 @@ import javax.swing.ImageIcon;
 import java.awt.Color;
 import javax.swing.JTextField;
 import com.toedter.calendar.JDateChooser;
+import java.awt.Container;
 import java.awt.Font;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
@@ -24,6 +25,8 @@ import java.beans.PropertyChangeEvent;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import jdbc.controller.ReservaController;
+import jdbc.model.Reserva;
 
 @SuppressWarnings("serial")
 public class ReservasView extends JFrame {
@@ -37,6 +40,8 @@ public class ReservasView extends JFrame {
     private JLabel labelExit;
     private JLabel lblValorSimbolo;
     private JLabel labelAtras;
+    private ReservaController reservaController;
+    public int reservaId;
 
     /**
      * Launch the application.
@@ -59,6 +64,12 @@ public class ReservasView extends JFrame {
      */
     public ReservasView() {
         super("Reserva");
+        
+        this.reservaController = new ReservaController();
+		
+		Container container = getContentPane();
+		setLayout(null);
+                
         setIconImage(Toolkit.getDefaultToolkit().getImage(ReservasView.class.getResource("/imagenes/aH-40px.png")));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 910, 560);
@@ -138,7 +149,8 @@ public class ReservasView extends JFrame {
         txtFechaS.setFont(new Font("Roboto", Font.PLAIN, 18));
         txtFechaS.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
-//Activa el evento, después del usuario seleccionar las fechas se debe calcular el valor de la reserva
+            //Activa el evento, después del usuario seleccionar las fechas se debe calcular el valor de la reserva
+                calcularValorEstadia(txtFechaE,txtFechaS);
             }
         });
         txtFechaS.setDateFormatString("yyyy-MM-dd");
@@ -295,12 +307,21 @@ public class ReservasView extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (ReservasView.txtFechaE.getDate() != null && ReservasView.txtFechaS.getDate() != null) {
-                    RegistroHuesped registro = new RegistroHuesped();
-                    registro.setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Debes llenar todos los campos.");
-                }
-            }
+					String fechaEntrada = ((JTextField) txtFechaE.getDateEditor().getUiComponent()).getText();
+					String fechaSalida = ((JTextField) txtFechaS.getDateEditor().getUiComponent()).getText();
+					Reserva reserva = new Reserva(java.sql.Date.valueOf(fechaEntrada), java.sql.Date.valueOf(fechaSalida),
+							txtValor.getText(), txtFormaPago.getSelectedItem().toString());
+					reservaController.guardar(reserva);
+					reservaId = reserva.getId();
+					limpiar();
+					RegistroHuesped registro = new RegistroHuesped(reservaId);
+					registro.setVisible(true);
+					System.out.println(reservaId);
+					
+				} else {
+					JOptionPane.showMessageDialog(null, "Debes llenar todos los campos.");
+				}
+			}
         });
         btnsiguiente.setLayout(null);
         btnsiguiente.setBackground(SystemColor.textHighlight);
@@ -328,11 +349,32 @@ public class ReservasView extends JFrame {
         this.setLocation(x - xMouse, y - yMouse);
     }
 
-    //Código para limpiar los campos
-    private void limpiar() {
-        this.txtFormaPago.setSelectedIndex(0);
-        this.txtValor.setText("");
-        this.txtFechaE.setCalendar(null);
-        this.txtFechaS.setCalendar(null);
-    }
+    //funcion para calcular el valor de la estadía
+	private void calcularValorEstadia (JDateChooser txtFechaE, JDateChooser txtFechaS) {
+		if (txtFechaS.getDate() != null && txtFechaE.getDate() != null) {
+			if (txtFechaS.getDate().after(txtFechaE.getDate())) {
+				lblValorSimbolo.setVisible(true);
+				int valorPorNoche = 200;
+				long millisecondsToFechaS = txtFechaS.getDate().getTime();
+				long millisecondsToFechaE = txtFechaE.getDate().getTime();
+				long diferenciaEnMillisegundos = millisecondsToFechaS - millisecondsToFechaE;
+				int diferenciaEnDias = (int) diferenciaEnMillisegundos / 86400000;
+				int valorTotalInt = diferenciaEnDias * valorPorNoche;
+				String valorTotal = String.valueOf(valorTotalInt);
+				txtValor.setText(valorTotal);
+			} else {
+				txtValor.setText("");
+				JOptionPane.showMessageDialog(null, "El Check-Out no puede ser anterior al Check-In");
+			}
+		}
+	}
+	
+	@SuppressWarnings("static-access")
+	private void limpiar() {
+		this.txtFechaE.setCalendar(null);
+		this.txtFechaS.setCalendar(null);
+		this.txtValor.setText("");
+		this.txtFormaPago.setSelectedIndex(0);
+	}
+		
 }

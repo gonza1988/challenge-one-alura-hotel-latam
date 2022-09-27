@@ -22,8 +22,11 @@ import java.awt.event.MouseMotionAdapter;
 import java.text.Format;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
+import java.sql.Date;
 import javax.swing.SwingConstants;
 import javax.swing.JSeparator;
+import jdbc.controller.HuespedController;
+import jdbc.model.Huesped;
 
 @SuppressWarnings("serial")
 public class RegistroHuesped extends JFrame {
@@ -38,6 +41,8 @@ public class RegistroHuesped extends JFrame {
 	private JLabel labelExit;
 	private JLabel labelAtras;
 	int xMouse, yMouse;
+        public static String idReservaString;
+	public static int reservaId;
 
 	/**
 	 * Launch the application.
@@ -46,7 +51,7 @@ public class RegistroHuesped extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					RegistroHuesped frame = new RegistroHuesped();
+					RegistroHuesped frame = new RegistroHuesped(reservaId);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -58,7 +63,7 @@ public class RegistroHuesped extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public RegistroHuesped() {
+	public RegistroHuesped(int ReservaId) {
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(RegistroHuesped.class.getResource("/imagenes/lOGO-50PX.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -151,7 +156,7 @@ public class RegistroHuesped extends JFrame {
 		txtNacionalidad.setBounds(560, 350, 289, 36);
 		txtNacionalidad.setBackground(SystemColor.text);
 		txtNacionalidad.setFont(new Font("Roboto", Font.PLAIN, 16));
-		txtNacionalidad.setModel(new DefaultComboBoxModel(new String[] {"afgano-afgana", "alemán-", "alemana", "árabe-árabe", "argentino-argentina", "australiano-australiana", "belga-belga", "boliviano-boliviana", "brasileño-brasileña", "camboyano-camboyana", "canadiense-canadiense", "chileno-chilena", "chino-china", "colombiano-colombiana", "coreano-coreana", "costarricense-costarricense", "cubano-cubana", "danés-danesa", "ecuatoriano-ecuatoriana", "egipcio-egipcia", "salvadoreño-salvadoreña", "escocés-escocesa", "español-española", "estadounidense-estadounidense", "estonio-estonia", "etiope-etiope", "filipino-filipina", "finlandés-finlandesa", "francés-francesa", "galés-galesa", "griego-griega", "guatemalteco-guatemalteca", "haitiano-haitiana", "holandés-holandesa", "hondureño-hondureña", "indonés-indonesa", "inglés-inglesa", "iraquí-iraquí", "iraní-iraní", "irlandés-irlandesa", "israelí-israelí", "italiano-italiana", "japonés-japonesa", "jordano-jordana", "laosiano-laosiana", "letón-letona", "letonés-letonesa", "malayo-malaya", "marroquí-marroquí", "mexicano-mexicana", "nicaragüense-nicaragüense", "noruego-noruega", "neozelandés-neozelandesa", "panameño-panameña", "paraguayo-paraguaya", "peruano-peruana", "polaco-polaca", "portugués-portuguesa", "puertorriqueño-puertorriqueño", "dominicano-dominicana", "rumano-rumana", "ruso-rusa", "sueco-sueca", "suizo-suiza", "tailandés-tailandesa", "taiwanes-taiwanesa", "turco-turca", "ucraniano-ucraniana", "uruguayo-uruguaya", "venezolano-venezolana", "vietnamita-vietnamita"}));
+		txtNacionalidad.setModel(new DefaultComboBoxModel(new String[] {"Afgano", "Alemán", "Árabe", "Argentino", "Australiano", "Belga", "Boliviano", "Brasileño", "Camboyano", "Canadiense", "Chileno", "Chino", "Colombiano", "Coreano", "Costarricence", "Cubano", "Danés", "Ecuatoriano", "Egipcio", "Salvadoreño", "Escocés", "Español", "Estadounidense", "Estonio", "Etiope", "Filipino", "Finlandés", "Francés", "Galés", "Griego", "Guatemalteco", "Haitiano", "Holandés", "hondureño-hondureña", "indonés-indonesa", "inglés-inglesa", "iraquí-iraquí", "iraní-iraní", "irlandés-irlandesa", "israelí-israelí", "italiano-italiana", "japonés-japonesa", "jordano-jordana", "laosiano-laosiana", "letón-letona", "letonés-letonesa", "malayo-malaya", "marroquí-marroquí", "mexicano-mexicana", "nicaragüense-nicaragüense", "noruego-noruega", "neozelandés-neozelandesa", "panameño-panameña", "paraguayo-paraguaya", "peruano-peruana", "polaco-polaca", "portugués-portuguesa", "puertorriqueño-puertorriqueño", "dominicano-dominicana", "rumano-rumana", "ruso-rusa", "sueco-sueca", "suizo-suiza", "tailandés-tailandesa", "taiwanes-taiwanesa", "turco-turca", "ucraniano-ucraniana", "uruguayo-uruguaya", "venezolano-venezolana", "vietnamita-vietnamita"}));
 		contentPane.add(txtNacionalidad);
 		
 		JLabel lblNombre = new JLabel("NOMBRE");
@@ -205,6 +210,7 @@ public class RegistroHuesped extends JFrame {
 		contentPane.add(lblNumeroReserva);
 		
 		txtNreserva = new JTextField();
+                txtNreserva.setText(String.valueOf(ReservaId));
 		txtNreserva.setFont(new Font("Roboto", Font.PLAIN, 16));
 		txtNreserva.setBounds(560, 495, 285, 33);
 		txtNreserva.setColumns(10);
@@ -248,68 +254,53 @@ public class RegistroHuesped extends JFrame {
 		separator_1_2_5.setBackground(new Color(12, 138, 199));
 		contentPane.add(separator_1_2_5);
                 
-                JButton btnCancelar = new JButton("");
-                btnCancelar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ReservasView reservas = new ReservasView();
-				reservas.setVisible(true);
-				dispose();
-			}
-		});
-		btnCancelar.setIcon(new ImageIcon(RegistroHuesped.class.getResource("/imagenes/cancelar.png")));
-		btnCancelar.setBackground(SystemColor.menu);
-		btnCancelar.setBounds(764, 543, 54, 41);
-		contentPane.add(btnCancelar);
-		
-		JButton btnGuardar = new JButton("");
-		btnGuardar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+                JPanel btnguardar = new JPanel();
+		btnguardar.setBounds(723, 560, 122, 35);
+		btnguardar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+
+				String fechaNacimiento = ((JTextField) txtFechaN.getDateEditor().getUiComponent()).getText();
+				String telefono = txtTelefono.getText();
+				int reservaIdInt = Integer.parseInt(txtNreserva.getText());
+				Huesped huesped = new Huesped(txtNombre.getText(), txtApellido.getText(), Date.valueOf(fechaNacimiento),
+						txtNacionalidad.getSelectedItem().toString(), txtTelefono.getText(), reservaIdInt);
+				HuespedController huespedController = new HuespedController();
+				huespedController.guardar(huesped, reservaIdInt);
 				Exito exito = new Exito();
 				exito.setVisible(true);
-				dispose();
+				limpiar();
+
 			}
 		});
-		btnGuardar.setIcon(new ImageIcon(RegistroHuesped.class.getResource("/imagenes/disquete.png")));
-		btnGuardar.setBackground(SystemColor.menu);
-		btnGuardar.setBounds(700, 543, 54, 41);
-		contentPane.add(btnGuardar);
-		
+		btnguardar.setLayout(null);
+		btnguardar.setBackground(new Color(12, 138, 199));
+		contentPane.add(btnguardar);
+		btnguardar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
 		JLabel labelGuardar = new JLabel("GUARDAR");
 		labelGuardar.setHorizontalAlignment(SwingConstants.CENTER);
 		labelGuardar.setForeground(Color.WHITE);
 		labelGuardar.setFont(new Font("Roboto", Font.PLAIN, 18));
 		labelGuardar.setBounds(0, 0, 122, 35);
-		btnGuardar.add(labelGuardar);
-                
-                JButton btnSalir = new JButton("");
-		btnSalir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				MenuUsuario usuario = new MenuUsuario();
-				usuario.setVisible(true);
-				dispose();
-			}
-		});
-		btnSalir.setIcon(new ImageIcon(RegistroHuesped.class.getResource("/imagenes/cerrar-sesion 32-px.png")));
-		btnSalir.setBackground(SystemColor.menu);
-		btnSalir.setBounds(828, 543, 54, 41);
-		contentPane.add(btnSalir);
-		
+		btnguardar.add(labelGuardar);
+
 		JPanel panel = new JPanel();
 		panel.setBounds(0, 0, 489, 634);
 		panel.setBackground(new Color(12, 138, 199));
 		contentPane.add(panel);
 		panel.setLayout(null);
-		
+
 		JLabel imagenFondo = new JLabel("");
 		imagenFondo.setBounds(0, 121, 479, 502);
 		panel.add(imagenFondo);
 		imagenFondo.setIcon(new ImageIcon(RegistroHuesped.class.getResource("/imagenes/registro.png")));
-		
+
 		JLabel logo = new JLabel("");
 		logo.setBounds(194, 39, 104, 107);
 		panel.add(logo);
 		logo.setIcon(new ImageIcon(RegistroHuesped.class.getResource("/imagenes/Ha-100px.png")));
-		
+
 		JPanel btnexit = new JPanel();
 		btnexit.setBounds(857, 0, 53, 36);
 		contentPane.add(btnexit);
@@ -320,20 +311,22 @@ public class RegistroHuesped extends JFrame {
 				principal.setVisible(true);
 				dispose();
 			}
+
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				btnexit.setBackground(Color.red);
 				labelExit.setForeground(Color.white);
-			}			
+			}
+
 			@Override
 			public void mouseExited(MouseEvent e) {
-				 btnexit.setBackground(Color.white);
-			     labelExit.setForeground(Color.black);
+				btnexit.setBackground(Color.white);
+				labelExit.setForeground(Color.black);
 			}
 		});
 		btnexit.setLayout(null);
 		btnexit.setBackground(Color.white);
-		
+
 		labelExit = new JLabel("X");
 		labelExit.setBounds(0, 0, 53, 36);
 		btnexit.add(labelExit);
@@ -341,18 +334,26 @@ public class RegistroHuesped extends JFrame {
 		labelExit.setForeground(SystemColor.black);
 		labelExit.setFont(new Font("Roboto", Font.PLAIN, 18));
 	}
-	
-	
-	//Código que permite mover la ventana por la pantalla según la posición de "x" y "y"	
-	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
-	        xMouse = evt.getX();
-	        yMouse = evt.getY();
-	    }
 
-	    private void headerMouseDragged(java.awt.event.MouseEvent evt) {
-	        int x = evt.getXOnScreen();
-	        int y = evt.getYOnScreen();
-	        this.setLocation(x - xMouse, y - yMouse);
-}
-											
+	// Código que permite mover la ventana por la pantalla según la posición de "x"
+	// y "y"
+	private void headerMousePressed(java.awt.event.MouseEvent evt) {
+		xMouse = evt.getX();
+		yMouse = evt.getY();
+	}
+
+	private void headerMouseDragged(java.awt.event.MouseEvent evt) {
+		int x = evt.getXOnScreen();
+		int y = evt.getYOnScreen();
+		this.setLocation(x - xMouse, y - yMouse);
+	}
+
+	private void limpiar() {
+		this.txtNombre.setText("");
+		this.txtApellido.setText("");
+		this.txtFechaN.setCalendar(null);
+		this.txtNacionalidad.setSelectedItem(0);
+		this.txtTelefono.setText("");
+	}
+
 }

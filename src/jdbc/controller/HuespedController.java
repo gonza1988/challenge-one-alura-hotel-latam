@@ -13,7 +13,7 @@ public class HuespedController {
     private HuespedDAO huespedDAO;
 
 	public HuespedController() {
-		this.huespedDAO = new HuespedDAO(new ConnectionFactory().RecuperarConexion());
+		this.huespedDAO = new HuespedDAO(new ConnectionFactory().recuperarConexion());
 	}
 
         

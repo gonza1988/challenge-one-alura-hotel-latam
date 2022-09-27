@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
+import jdbc.factory.ConnectionFactory;
 import jdbc.model.Huesped;
 import jdbc.model.Reserva;
 
@@ -23,7 +24,7 @@ public class HuespedDAO {
     public void guardarHuesped(Huesped huesped, int nroReserva) {
 
         try {
-            String sql = "INSERT INTO huespedes (nombre, apellido, fechaNacimiento, nacionalidad, telefono, id_reservas) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO huespedes (nombre, apellido, fechaNacimiento, nacionalidad, telefono, id_reserva) VALUES (?, ?, ?, ?, ?, ?)";
 
             try ( PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -39,7 +40,7 @@ public class HuespedDAO {
                 try ( ResultSet resultSet = statement.getGeneratedKeys()) {
                     while (resultSet.next()) {
                         huesped.setId(resultSet.getInt(1));
-                        System.out.println(String.format("Fue insertada la reserva de Id %s", huesped));
+                        System.out.println(String.format("Fue insertada la reserva de id %s", huesped));
                     }
                 }
             }
@@ -54,18 +55,19 @@ public class HuespedDAO {
 
         try {
 
-            String sql = "SELECT id, nombre, apellido, fechaNacimiento, nacionalidad, telefono, id_reservas FROM huespedes";
+            String sql = "select id, nombre, apellido, fechaNacimiento, nacionalidad, telefono, id_reserva from huespedes";
 
             try ( PreparedStatement statement = connection.prepareStatement(sql)) {
 
-                statement.executeUpdate();
+                statement.execute();
 
                 try ( ResultSet resultSet = statement.getResultSet()) {
                     while (resultSet.next()) {
                         Huesped huesped = new Huesped(resultSet.getInt("id"), resultSet.getString("nombre"),
                                 resultSet.getString("apellido"), resultSet.getDate("fechaNacimiento"),
                                 resultSet.getString("nacionalidad"), resultSet.getString("telefono"),
-                                resultSet.getInt("id_reservas"));
+                                resultSet.getInt("id_reserva"));
+
                         resultado.add(huesped);
 
                     }
@@ -79,7 +81,7 @@ public class HuespedDAO {
 
     public int eliminarHuesped(Integer id) {
         try {
-            String sql = "DELETE FROM huespedes WHERE ID = ?";
+            String sql = "DELETE FROM huespedes WHERE id = ?";
 
             try ( PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setInt(1, id);
@@ -97,18 +99,18 @@ public class HuespedDAO {
     public int modificarHuesped(String nombre, String apellido, Date fechaNacimiento, String nacionalidad, String telefono, int id_reserva, Integer id) {
         try {
             String sql = "UPDATE huespedes SET " + " nombre = ?, " + " apellido = ?," + " fechaNacimiento = ?,"
-							+ " nacionalidad = ?," + " telefono = ?," + " id_reserva = ?" + " WHERE id = ?";
+                    + " nacionalidad = ?," + " telefono = ?," + " id_reserva = ?" + " WHERE id = ? ";
 
             try ( PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, nombre);
-				statement.setString(2, apellido);
-				statement.setDate(3, fechaNacimiento);
-				statement.setString(4, nacionalidad);
-				statement.setString(5, telefono);
-				statement.setInt(6, id_reserva);
-				statement.setInt(7, id);
-				statement.execute();
-
+                statement.setString(2, apellido);
+                statement.setDate(3, fechaNacimiento);
+                statement.setString(4, nacionalidad);
+                statement.setString(5, telefono);
+                statement.setInt(6, id_reserva);
+                statement.setInt(7, id);
+                
+                statement.executeUpdate();
 
                 int updateCount = statement.getUpdateCount();
 
@@ -124,15 +126,14 @@ public class HuespedDAO {
 
         try {
 
-            String sql = "SELECT id, nombre, apellido, fechaNacimiento, nacionalidad, telefono, id_reserva FROM huespedes WHERE nombre = ? OR apellido = ? OR Busqueda = ?";
+            String sql = "SELECT id, nombre, apellido, fechaNacimiento, nacionalidad, telefono, id_reserva from huespedes where nombre = ? OR apellido = ? ";
 
             try ( PreparedStatement statement = connection.prepareStatement(sql)) {
 
                 statement.setString(1, busqueda);
                 statement.setString(2, busqueda);
-                statement.setString(3, busqueda);
 
-                statement.executeUpdate();
+                statement.execute();
 
                 try ( ResultSet resultSet = statement.getResultSet()) {
                     while (resultSet.next()) {

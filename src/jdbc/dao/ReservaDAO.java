@@ -37,7 +37,7 @@ public class ReservaDAO {
                 try ( ResultSet resultSet = statement.getGeneratedKeys()) {
                     while (resultSet.next()) {
                         reserva.setId(resultSet.getInt(1));
-                        System.out.println(String.format("Fue insertada la reserva de Id %s", reserva));
+                        System.out.println(String.format("Fue insertada la reserva de id %s", reserva));
                     }
                 }
             }
@@ -52,13 +52,12 @@ public class ReservaDAO {
 
         try {
 
-            String sql = "SELECT Id, fechaEntrada, fechaSalida, valor, formaPago FROM reservas";
-            
-            try ( PreparedStatement statement = connection.prepareStatement(sql)) {
+            try ( PreparedStatement statement = connection
+                    .prepareStatement("SELECT id, FechaEntrada, FechaSalida, valor, formaPago FROM reservas")) {
 
-                statement.executeUpdate();
+                statement.execute();
 
-                try (ResultSet resultSet = statement.getResultSet()) {
+                try ( ResultSet resultSet = statement.getResultSet()) {
                     while (resultSet.next()) {
                         Reserva fila = new Reserva(resultSet.getInt("id"), resultSet.getDate("fechaEntrada"),
                                 resultSet.getDate("fechaSalida"), resultSet.getString("valor"),
@@ -93,19 +92,19 @@ public class ReservaDAO {
         }
     }
 
-    public int modificar(Date fecha_entrada, Date fecha_salida, String valor, String forma_Pago, Integer id) {
+    public int modificar(Date fechEntrada, Date fechaSalida, String valor, String formaPago, Integer id) {
         try {
             String sql = "UPDATE reservas SET " + " fechaEntrada = ?, "
-					+ " fechaSalida = ?," + " valor = ?," + " formaPago = ?" + " WHERE id = ?";
-            
+                    + " fechaSalida = ?," + " valor = ?," + " formaPago = ?" + " WHERE id = ?";
 
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setDate(1, (java.sql.Date) fecha_entrada);
-                statement.setDate(2, (java.sql.Date) fecha_salida);
+            try ( PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setDate(1, (java.sql.Date) fechEntrada);
+                statement.setDate(2, (java.sql.Date) fechaSalida);
                 statement.setString(3, valor);
-                statement.setString(4, forma_Pago);
+                statement.setString(4, formaPago);
                 statement.setInt(5, id);
-                statement.execute();
+                
+                statement.executeUpdate();
 
                 int updateCount = statement.getUpdateCount();
 
@@ -121,15 +120,15 @@ public class ReservaDAO {
 
         try {
 
-            String sql = "select id, fechaEntrada, fechaSalida, valor, formaPago from reservas WHERE Id = ?";
+            String sql = "select id, fechaEntrada, fechaSalida, valor, formaPago from reservas where id = ? ";
 
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            try ( PreparedStatement statement = connection.prepareStatement(sql)) {
 
                 statement.setString(1, busqueda);
 
-                statement.executeUpdate();
+                statement.execute();
 
-                try (ResultSet resultSet = statement.getResultSet()) {
+                try ( ResultSet resultSet = statement.getResultSet()) {
                     while (resultSet.next()) {
                         Reserva fila = new Reserva(resultSet.getInt("id"), resultSet.getDate("fechaEntrada"),
                                 resultSet.getDate("fechaSalida"), resultSet.getString("valor"),

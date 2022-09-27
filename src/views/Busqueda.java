@@ -24,6 +24,13 @@ import javax.swing.ListSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.sql.Date;
+import java.util.Optional;
+import javax.swing.JOptionPane;
+import jdbc.controller.HuespedController;
+import jdbc.controller.ReservaController;
+import jdbc.model.Huesped;
+import jdbc.model.Reserva;
 
 @SuppressWarnings("serial")
 public class Busqueda extends JFrame {
@@ -102,7 +109,11 @@ public class Busqueda extends JFrame {
 		modelo.addColumn("Valor");
 		modelo.addColumn("Forma de Pago");
 		
+                //funcion para cargar la tabla de reservas de la base de datos
+                modelo.addRow(new Object[] { "Id", "Fecha de Entrada", "Fecha de Salida", "Valor", "Forma de Pago" });
+		cargarTablaReservas();
 		
+                
 		tbHuespedes = new JTable();
 		tbHuespedes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tbHuespedes.setFont(new Font("Roboto", Font.PLAIN, 16));
@@ -115,7 +126,13 @@ public class Busqueda extends JFrame {
 		modeloH.addColumn("Nacionalidad");
 		modeloH.addColumn("Telefono");
 		modeloH.addColumn("Numero de Reserva");
+                
+                //funcion para cargar la tabla de huespedes de la base de datos
+                modeloH.addRow(new Object[] { "ID", "NOMBRE", "APELLIDO", "FECHA DE NACIMIENTO", "NACIONALIDAD", "TELEFONO",
+				"ID RESERVA" });
+		cargarTablaHuespedes();
 		
+                
 		JLabel lblNewLabel_2 = new JLabel("");
 		lblNewLabel_2.setIcon(new ImageIcon(Busqueda.class.getResource("/imagenes/Ha-100px.png")));
 		lblNewLabel_2.setBounds(56, 51, 104, 107);
@@ -207,11 +224,19 @@ public class Busqueda extends JFrame {
 		separator_1_2.setBounds(539, 159, 193, 2);
 		contentPane.add(separator_1_2);
 		
+                //Activar al presionar el mouse la búsqueda de huéspedes o reservas
 		JPanel btnbuscar = new JPanel();
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
+				limpiarTabla();
+				System.out.println(txtBuscar.getText());
+				if (txtBuscar.getText() != "") {
+					cargarBusqueda();
+				} else if (txtBuscar.getText() == "") {
+					cargarTablaHuespedes();
+					cargarTablaReservas();
+				}
 			}
 		});
 		btnbuscar.setLayout(null);
@@ -240,6 +265,18 @@ public class Busqueda extends JFrame {
 		lblEditar.setFont(new Font("Roboto", Font.PLAIN, 18));
 		lblEditar.setBounds(0, 0, 122, 35);
 		btnEditar.add(lblEditar);
+                
+                //Activar funciones para editar 
+                btnEditar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				modificar();
+				limpiarTabla();
+				cargarTablaHuespedes();
+				cargarTablaReservas();
+			}
+		});
+                
 		
 		JPanel btnEliminar = new JPanel();
 		btnEliminar.setLayout(null);
@@ -255,6 +292,147 @@ public class Busqueda extends JFrame {
 		lblEliminar.setBounds(0, 0, 122, 35);
 		btnEliminar.add(lblEliminar);
 		setResizable(false);
+                
+                //Activar al presionar el botón la función para eliminar
+                btnEliminar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// FUNCION PARA ELIMINAR
+				eliminar();
+				limpiarTabla();
+				cargarTablaHuespedes();
+				cargarTablaReservas();
+			}
+		});
+	}
+        
+        
+        //Funciones
+        private void cargarTablaReservas() {
+
+		ReservaController reservaController = new ReservaController();
+
+		List<Reserva> reservas = reservaController.listarReservas();
+
+		reservas.forEach(reserva -> modelo.addRow(new Object[] { reserva.getId(), reserva.getFechaEntrada(),
+				reserva.getFechaSalida(), reserva.getValor(), reserva.getFormaPago() }));
+	}
+
+	private void cargarTablaHuespedes() {
+
+		HuespedController huespedController = new HuespedController();
+
+		List<Huesped> huespedes = huespedController.listarHuespedes();
+
+		huespedes.forEach(huesped -> modeloH.addRow(new Object[] { huesped.getId(), huesped.getNombre(),
+				huesped.getApellido(), huesped.getFechaNacimiento(), huesped.getNacionalidad(), huesped.getTelefono(),
+				huesped.getNroReserva() }));
+	}
+
+	private void cargarBusqueda() {
+
+		ReservaController reservaController = new ReservaController();
+		HuespedController huespedController = new HuespedController();
+
+		List<Reserva> reservas = reservaController.listarBusqueda(txtBuscar.getText());
+		List<Huesped> huespedes = huespedController.listarBusquedaHuesped(txtBuscar.getText());
+
+		reservas.forEach(reserva -> modelo.addRow(new Object[] { reserva.getId(), reserva.getFechaEntrada(),
+				reserva.getFechaSalida(), reserva.getValor(), reserva.getFormaPago() }));
+		huespedes.forEach(huesped -> modeloH.addRow(new Object[] { huesped.getId(), huesped.getNombre(),
+				huesped.getApellido(), huesped.getFechaNacimiento(), huesped.getNacionalidad(), huesped.getTelefono(),
+				huesped.getNroReserva() }));
+
+	}
+
+	private void limpiarTabla() {
+
+		while (modeloH.getRowCount() != 1) {
+			modeloH.removeRow(1);
+		}
+		while (modelo.getRowCount() != 1) {
+			modelo.removeRow(1);
+		}
+
+	}
+
+	private boolean noTieneFilaElegidaHuespedes() {
+		return tbHuespedes.getSelectedRowCount() == 0 || tbHuespedes.getSelectedColumnCount() == 0;
+	}
+
+	private boolean noTieneFilaElegidaReservas() {
+		return tbReservas.getSelectedColumnCount() == 0 || tbReservas.getSelectedRowCount() == 0;
+	}
+
+	private void modificar() {
+
+		ReservaController reservaController = new ReservaController();
+		HuespedController huespedController = new HuespedController();
+
+		if (noTieneFilaElegidaHuespedes() && noTieneFilaElegidaReservas()) {
+			JOptionPane.showMessageDialog(this, "Por favor, elija el item a modificar");
+			return;
+		}
+
+		if (noTieneFilaElegidaHuespedes()) {
+			Optional.ofNullable(modelo.getValueAt(tbReservas.getSelectedRow(), tbReservas.getSelectedColumn()))
+					.ifPresentOrElse(fila -> {
+						Integer id = Integer.valueOf(modelo.getValueAt(tbReservas.getSelectedRow(), 0).toString());
+						Date checkin = Date.valueOf(modelo.getValueAt(tbReservas.getSelectedRow(), 1).toString());
+						Date checkout = Date.valueOf(modelo.getValueAt(tbReservas.getSelectedRow(), 2).toString());
+						String valor = (String) modelo.getValueAt(tbReservas.getSelectedRow(), 3);
+						String formaPago = (String) modelo.getValueAt(tbReservas.getSelectedRow(), 4);
+						reservaController.modificar(checkin, checkout, valor, formaPago, id);
+
+						Exito.main(null);
+					}, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
+		}
+		if (noTieneFilaElegidaReservas()) {
+			Optional.ofNullable(modeloH.getValueAt(tbHuespedes.getSelectedRow(), tbHuespedes.getSelectedColumn()))
+					.ifPresentOrElse(fila -> {
+						Integer id = Integer.valueOf(modeloH.getValueAt(tbHuespedes.getSelectedRow(), 0).toString());
+						String nombre = (String) modeloH.getValueAt(tbHuespedes.getSelectedRow(), 1);
+						String apellido = (String) modeloH.getValueAt(tbHuespedes.getSelectedRow(), 2);
+						Date fechaNacimiento = Date
+								.valueOf(modeloH.getValueAt(tbHuespedes.getSelectedRow(), 3).toString());
+						String nacionalidad = (String) modeloH.getValueAt(tbHuespedes.getSelectedRow(), 4);
+						String telefono = (String)modeloH.getValueAt(tbHuespedes.getSelectedRow(), 5);
+						int idReserva = Integer.valueOf(modeloH.getValueAt(tbHuespedes.getSelectedRow(), 6).toString());
+						huespedController.modificarHuesped(nombre, apellido, fechaNacimiento, nacionalidad, telefono,
+								idReserva, id);
+
+						Exito.main(null);
+					}, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
+		}
+	}
+
+	private void eliminar() {
+
+		ReservaController reservaController = new ReservaController();
+		HuespedController huespedController = new HuespedController();
+
+		if (noTieneFilaElegidaHuespedes() && noTieneFilaElegidaReservas()) {
+			JOptionPane.showMessageDialog(this, "Por favor, elije un item");
+			return;
+		}
+		if (noTieneFilaElegidaHuespedes()) {
+			Optional.ofNullable(modelo.getValueAt(tbReservas.getSelectedRow(), tbReservas.getSelectedColumn()))
+					.ifPresentOrElse(fila -> {
+						Integer id = Integer.valueOf(modelo.getValueAt(tbReservas.getSelectedRow(), 0).toString());
+						reservaController.eliminar(id);
+
+						Exito.main(null);
+					}, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
+		}
+		if (noTieneFilaElegidaReservas()) {
+			Optional.ofNullable(modeloH.getValueAt(tbHuespedes.getSelectedRow(), tbHuespedes.getSelectedColumn()))
+					.ifPresentOrElse(fila -> {
+						Integer id = Integer.valueOf(modeloH.getValueAt(tbHuespedes.getSelectedRow(), 0).toString());
+						huespedController.eliminarHuesped(id);
+
+						Exito.main(null);
+					}, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
+		}
 	}
 	
 //Código que permite mover la ventana por la pantalla según la posición de "x" y "y"
