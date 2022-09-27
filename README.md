@@ -21,6 +21,41 @@ Menú principal:
 <img src="src\imagenes\menuPrincipal.png">
 <br><br>
 
+Login:
+<img src="src\imagenes\loginCaptura.png">
+<br><br>
+
+Menú Usuario:
+<img src="src\imagenes\menuUsuario.png">
+<br><br>
+
+Creando una reserva:
+<img src="src\imagenes\nuevaReserva.png">
+<br><br>
+
+Creando el huésped:
+<img src="src\imagenes\nuevoHuesped.png">
+<br><br>
+
+Alerta de registro:
+<img src="src\imagenes\alertaRegistro.png">
+<br><br>
+
+Huesped creado y encontrado en la base de datos:
+<img src="src\imagenes\tablaHuesped.png">
+<br><br>
+
+Reserva creada y encontrado en la base de datos:
+<img src="src\imagenes\tablaReserva.png">
+<br><br>
+
+Busqueda del Huesped en la base de datos(por apellido,nombre o id):
+<img src="src\imagenes\busquedaHuesped.png">
+<br><br>
+
+Borrado del Huesped en la base de datos:
+<img src="src\imagenes\eliminado.png">
+<br><br>
 
 ---
  ⚠️ Importante! ⚠️
